@@ -16,6 +16,12 @@ const styles = StyleSheet.create({
   pressed: {
     opacity: 0.5,
   },
+  correctTile: {
+    backgroundColor: "lightgreen",
+  },
+  incorrectTile: {
+    backgroundColor: "lightcoral",
+  },
 });
 
 export default styles;
