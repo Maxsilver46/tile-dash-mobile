@@ -39,7 +39,9 @@ export default function GameScreen() {
           lastClicked={lastClicked}
         />
       </View>
-      {isGameOver && <GameOver didWin={didWin} resetGame={resetGame} />}
+      {isGameOver && (
+        <GameOver didWin={didWin} resetGame={resetGame} id={levelConfig.id} />
+      )}
     </View>
   );
 }
