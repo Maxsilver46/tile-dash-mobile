@@ -5,6 +5,7 @@ export interface LevelConfig {
   blinkDuration: number;
   interval: number;
   penalty: "none" | "score" | "gameover";
+  lowestScore: number;
 }
 
 export const LEVELS: LevelConfig[] = [
@@ -16,6 +17,7 @@ export const LEVELS: LevelConfig[] = [
     blinkDuration: 800,
     interval: 1100,
     penalty: "none",
+    lowestScore: 0,
   },
   {
     // Level 2: Speed Increase
@@ -25,6 +27,7 @@ export const LEVELS: LevelConfig[] = [
     blinkDuration: 400, // Shorter blink time
     interval: 1000, // Faster interval
     penalty: "score",
+    lowestScore: -10,
   },
   {
     // Level 3: Higher Stakes
@@ -34,6 +37,7 @@ export const LEVELS: LevelConfig[] = [
     blinkDuration: 600,
     interval: 900,
     penalty: "gameover", // Game Over on any miss
+    lowestScore: -10,
   },
   // ... and so on for Level 4 (Memory), Level 5 (Time Limit), etc.
 ];

@@ -11,18 +11,6 @@ export default function LandingScreen() {
       >
         <Button title="Level 1" />
       </Link>
-      <Link
-        href={{ pathname: "/screens/game", params: { levelId: 2 } }}
-        asChild
-      >
-        <Button title="Level 2" />
-      </Link>
-      <Link
-        href={{ pathname: "/screens/game", params: { levelId: 3 } }}
-        asChild
-      >
-        <Button title="Level 3" />
-      </Link>
     </View>
   );
 }

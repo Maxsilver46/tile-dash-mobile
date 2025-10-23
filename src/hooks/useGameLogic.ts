@@ -1,107 +1,65 @@
 import { useEffect, useState } from "react";
 import { LevelConfig } from "../config/level";
-
-const TOTAL_TILES = 9;
-const getRandomTileIndex = () => Math.floor(Math.random() * TOTAL_TILES);
-
-const startGame = (
-  isGameOver: boolean,
-  setActiveTileIndex: (value: number | null) => void,
-  blinkDurationMs: number,
-  intervalMs: number
-) => {
-  useEffect(() => {
-    if (isGameOver) return;
-
-    const interval = setInterval(() => {
-      setActiveTileIndex(getRandomTileIndex());
-
-      return setBlinkMs(setActiveTileIndex, blinkDurationMs);
-    }, intervalMs);
-
-    return () => clearInterval(interval);
-  }, [isGameOver, intervalMs, blinkDurationMs]);
-};
-
-const setBlinkMs = (
-  setActiveTileIndex: (value: number | null) => void,
-  blinkDurationMs: number
-) => {
-  const timeout = setTimeout(() => {
-    setActiveTileIndex(null);
-  }, blinkDurationMs);
-
-  return () => clearTimeout(timeout);
-};
+import useActiveTile from "./useActiveTile";
+import useGameStatus from "./useGameStatus";
+import useScoreSystem from "./useScoreSystem";
 
 const useGameLogic = (config: LevelConfig) => {
-  const [activeTileIndex, setActiveTileIndex] = useState<number | null>(null);
-  const [score, setScore] = useState(0);
-  const [isGameOver, setIsGameOver] = useState(false);
-  const [didWin, setDidWin] = useState(false);
+  const [lastClicked, setLastClicked] = useState<number | null>(null);
+  const { totalScore, interval, blinkDuration } = config;
+  const { isRunning, start, stop, reset: resetStatus } = useGameStatus();
   const [isCorrectTile, setIsCorrectTile] = useState(false);
-  const [lastClickedIndex, setLastClickedIndex] = useState<number | null>(null);
-  const {
-    totalScore,
-    interval: intervalMs,
-    blinkDuration: blinkDurationMs,
-    penalty,
-  } = config;
+  const [isGameOver, setIsGameOver] = useState(false);
+  const activeTile = useActiveTile(isRunning, interval, blinkDuration);
+  const { score, didWin, didLose, handleResult, resetScore } =
+    useScoreSystem(config);
 
   useEffect(() => {
-    if (lastClickedIndex !== null) {
-      const timer = setTimeout(() => {
-        setLastClickedIndex(null);
-      }, 300);
-      return () => clearTimeout(timer);
-    }
-  }, [lastClickedIndex]);
+    start();
+  }, []);
 
-  startGame(isGameOver, setActiveTileIndex, blinkDurationMs, intervalMs);
+  useEffect(() => {
+    if (didWin || didLose) {
+      stop();
+      setIsGameOver(true);
+    }
+  }, [didWin, didLose, stop]);
+
+  useEffect(() => {
+    if (lastClicked === null) return;
+
+    const timer = setTimeout(() => setLastClicked(null), 300);
+    return () => clearTimeout(timer);
+  }, [lastClicked]);
 
   const handleTilePress = (index: number) => {
-    setLastClickedIndex(index);
+    if (!isRunning) return;
 
-    if (index === activeTileIndex) {
-      const newScore = score + 1;
-      if (newScore === totalScore) {
-        setIsGameOver(true);
-        setDidWin(true);
-      }
+    setLastClicked(index);
+    const correct = index === activeTile;
+    setIsCorrectTile(correct);
+    handleResult(correct);
+  };
 
-      setScore(newScore);
-      setActiveTileIndex(null);
-      setIsCorrectTile(true);
-    } else {
-      if (penalty === "score") {
-        if (score - 1 === -10) {
-          setIsGameOver(true);
-          setDidWin(false);
-        }
-        setScore((s) => (s > -10 ? s - 1 : 0));
-      }
-      if (penalty === "gameover") {
-        setIsGameOver(true);
-        setDidWin(false);
-      }
-      setIsCorrectTile(false);
-    }
+  const resetGame = () => {
+    resetStatus();
+    resetScore();
+    setLastClicked(null);
+    setIsCorrectTile(false);
+    setIsGameOver(false);
+    start();
   };
 
   return {
-    activeTileIndex,
+    activeTile,
     score,
     handleTilePress,
     isGameOver,
+    totalScore,
     didWin,
-    total: totalScore,
     isCorrectTile,
-    lastClickedIndex,
-    resetGame: () => {
-      setScore(0);
-      setIsGameOver(false);
-      setLastClickedIndex(null);
-    },
+    lastClicked,
+    resetGame,
   };
 };
 

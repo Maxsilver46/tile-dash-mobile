@@ -6,8 +6,8 @@ interface TileProps {
   isLit: boolean;
   onPress: () => void;
   isCorrectTile: boolean;
-  index: number; // Add this
-  lastClickedIndex: number | null; // Add this
+  index: number;
+  lastClicked: number | null;
 }
 
 const Tile: React.FC<TileProps> = ({
@@ -15,9 +15,9 @@ const Tile: React.FC<TileProps> = ({
   onPress,
   isCorrectTile,
   index,
-  lastClickedIndex,
+  lastClicked,
 }) => {
-  const showFeedback = lastClickedIndex === index;
+  const showFeedback = lastClicked === index;
 
   return (
     <Pressable

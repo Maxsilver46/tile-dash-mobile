@@ -5,19 +5,19 @@ import Tile from "./Tile";
 const TOTAL_TILES = 9;
 
 interface GridProps {
-  activeTileIndex: number | null;
+  activeTile: number | null;
   handleTilePress: (index: number) => void;
   isGameOver: boolean;
   isCorrectTile: boolean;
-  lastClickedIndex: number | null; // Add this
+  lastClicked: number | null;
 }
 
 const Grid = ({
-  activeTileIndex,
+  activeTile,
   handleTilePress,
   isGameOver,
   isCorrectTile,
-  lastClickedIndex,
+  lastClicked,
 }: GridProps) => {
   return (
     <View style={[styles.grid, isGameOver && styles.gridDisabled]}>
@@ -25,10 +25,10 @@ const Grid = ({
         <Tile
           key={i}
           index={i}
-          isLit={i === activeTileIndex}
+          isLit={i === activeTile}
           onPress={() => handleTilePress(i)}
           isCorrectTile={isCorrectTile}
-          lastClickedIndex={lastClickedIndex}
+          lastClicked={lastClicked}
         />
       ))}
     </View>

@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from "expo-router"; // Import this
+import { useLocalSearchParams } from "expo-router";
 import { View } from "react-native";
 import GameOver from "../../components/GameOver";
 import Grid from "../../components/Grid";
@@ -11,14 +11,14 @@ export default function GameScreen() {
   const { levelId } = useLocalSearchParams();
   const levelConfig = LEVELS.find((l) => l.id === Number(levelId)) || LEVELS[0];
   const {
-    activeTileIndex,
+    activeTile,
     score,
     handleTilePress,
     isGameOver,
-    total,
+    totalScore,
     didWin,
     isCorrectTile,
-    lastClickedIndex, // Add this
+    lastClicked,
     resetGame,
   } = useGameLogic(levelConfig);
 
@@ -26,17 +26,17 @@ export default function GameScreen() {
     <View style={styles.container}>
       <ScoreCard
         score={score}
-        total={total}
+        total={totalScore}
         level={levelConfig.id}
         title={levelConfig.title}
       />
       <View style={styles.playGround}>
         <Grid
-          activeTileIndex={activeTileIndex}
+          activeTile={activeTile}
           handleTilePress={handleTilePress}
           isGameOver={isGameOver}
           isCorrectTile={isCorrectTile}
-          lastClickedIndex={lastClickedIndex} // Add this
+          lastClicked={lastClicked}
         />
       </View>
       {isGameOver && <GameOver didWin={didWin} resetGame={resetGame} />}
